@@ -1,0 +1,9 @@
+; $Id$
+name = Text Analysis
+description = Provides an API for text analysis and an UI for annotation proposals in the WissKI editor.
+core = 6.x
+version = "2.0-dev"
+package = "WissKI Text"
+dependencies[] = wisski_vocab_ctrl
+dependencies[] = wisski_textedit
+
