@@ -9,14 +9,12 @@ function wisski_textanly_install() {
   drupal_install_schema('wisski_textanly');
 
   // load personnames file into table
-  _wisski_textanly_bulk_load('wisski_textanly_personnames', drupal_get_path('module', 'wisski_textanly') . '/default_personnames.csv');
-
-  // load events file into table
-  _wisski_textanly_bulk_load('wisski_textanly_events', drupal_get_path('module', 'wisski_textanly') . '/default_events.csv');
+  _wisski_textanly_bulk_load('wisski_textanly_mw_automaton', drupal_get_path('module', 'wisski_textanly') . '/default_personnames.csv');
+  _wisski_textanly_bulk_load('wisski_textanly_mw_automaton', drupal_get_path('module', 'wisski_textanly') . '/default_persontypes.csv');
 
   // set up a default vocab detection step
   $default_vocab = array(
-    'wisski_textanly_pipes',
+    'wisski_textanly_analyser',
     'Default vocabulary detection',
     'default',
     '',
@@ -57,7 +55,7 @@ function _wisski_textanly_bulk_load($table, $file) {
     $lines = array();
     for ($count = 0; $count < 1000 && !feof($fh); $count++) {
       $line = fgets($fh);
-      if (preg_match('/^\s*$/', $line)) continue;
+      if (preg_match('/^\s*$|^ +#/', $line)) continue;  // empty line or comment
       $line = str_replace("\n", '', $line);
       $values = "";
       foreach (explode("\t", $line) as $c)
@@ -84,7 +82,8 @@ function wisski_textanly_uninstall() {
 * @author Martin Scholz
 */
 function wisski_textanly_schema() {
-  $schema['wisski_textanly_pipes'] = array(
+
+  $schema['wisski_textanly_analyser'] = array(
     'fields' => array(
       'aid' => array(
         'type' => 'serial',
@@ -96,9 +95,24 @@ function wisski_textanly_schema() {
         'length' => 255,
         'not null' => TRUE,
       ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+      ),
       'profile' => array(
         'type' => 'varchar',
         'length' => 50,
+        'not null' => TRUE,
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'size' => 'normal',
         'not null' => TRUE,
       ),
       'lang' => array(
@@ -106,35 +120,31 @@ function wisski_textanly_schema() {
         'length' => 11,
         'default' => '',
       ),
-      'weight' => array(
-        'type' => 'int',
-        'size' => 'normal',
-        'not null' => TRUE,
-      ),
-      'type' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
-      'module' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ),
       'settings' => array(
         'type' => 'text',
         'size' => 'normal',
         'not null' => TRUE,
+        'serialize' => TRUE,
       ),
     ),
     'primary key' => array('aid'),
+    'unique keys' => array(
+      'name' => array('name'),
+    ),
+    'indexed' => array(
+      'module' => array('module'),
+      'type' => array('type'),
+      'weight' => array('weight'),
+      'profile' => array('profile'),
+      'lang' => array('lang'),
+    ),
   );
 
-  $schema['wisski_textanly_personnames'] = array(
+  $schema['wisski_textanly_mw_automaton'] = array(
     'fields' => array(
       'name' => array(
         'type' => 'varchar',
-        'length' => 255,
+        'length' => 150,
         'not null' => TRUE,
       ),
       'type' => array(
@@ -157,40 +167,19 @@ function wisski_textanly_schema() {
         'length' => 11,
         'default' => '',
       ),
-    ),
-    'indexed' => array(
-      'name' => array('name', 250),
-    ),
-  );
-
-  $schema['wisski_textanly_events'] = array(
-    'fields' => array(
-      'event' => array(
+      'gender' => array(
         'type' => 'varchar',
-        'length' => 10000,
-        'not null' => TRUE,
-      ),
-      'pos' => array(
-        'type' => 'varchar',
-        'length' => 11,
-        'not null' => TRUE,
-      ),
-      'name' => array(
-        'type' => 'varchar',
-        'length' => 10000,
-        'not null' => TRUE,
-      ),
-      'lang' => array(
-        'type' => 'varchar',
-        'length' => 11,
+        'length' => 10,
         'default' => '',
       ),
     ),
     'indexed' => array(
-      'name' => array('name', 250),
+      'name' => array(array('name', 20)),
+      'type' => array('type'),
+      'lang' => array('lang'),
+      'rank' => array('rank'),
     ),
   );
-
 
   return $schema;
 }

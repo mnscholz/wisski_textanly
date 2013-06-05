@@ -11,77 +11,72 @@ function wisski_textanly_menu () {
   $items = array();
   $items['wisski/textanly/analyse'] = array (
     'title' => '',
-    'page callback' => 'wisski_textanly_ws_analyse',
+    'page callback' => 'wisski_textanly_ajax_analyse',
     'type' => MENU_CALLBACK,
     'access arguments' => array('wisski use editor'),
   );
   /* admin settings */
   $items['admin/settings/wisski/text/anly'] = array(
-      'title' => 'Automatic text analysis',
-      'type' => MENU_LOCAL_TASK,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('wisski_textanly_admin_list'),
-      'access arguments' => array('wisski administrate page'),
-      'file' => 'wisski_textanly.admin.inc',
-      );
-  $items['admin/settings/wisski/text/anly/list'] = array(
-      'title' => 'List',
-      'type' => MENU_DEFAULT_LOCAL_TASK,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('wisski_textanly_admin_list'),
-      'access arguments' => array('wisski administrate page'),
-      'file' => 'wisski_textanly.admin.inc',
-      );
-  $items['admin/settings/wisski/text/anly/add'] = array(
-      'title' => 'Add',
-      'type' => MENU_LOCAL_TASK,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('wisski_textanly_admin_add'),
-      'access arguments' => array('wisski administrate page'),
-      'file' => 'wisski_textanly.admin.inc',
-      );
-  $items['admin/settings/wisski/text/anly/preprocessor'] = array(
-      'title' => 'Preprocessor',
-      'type' => MENU_LOCAL_TASK,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('wisski_textanly_admin_preprocessor'),
-      'access arguments' => array('wisski administrate page'),
-      'file' => 'wisski_textanly.admin.inc',
-      );
-  foreach (wisski_textanly_get_types() as $type => $info) {
-    if ($type == 'local') continue;
-    $items['admin/settings/wisski/text/anly/add/' . $type] = array(
-        'title' => 'Add ' . $info['name'],
-        'type' => MENU_LOCAL_TASK,
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('wisski_textanly_admin_edit', NULL, $type),
-        'access arguments' => array('wisski administrate page'),
-        'file' => 'wisski_textanly.admin.inc',
-        );
-  }
+    'title' => 'Automatic text analysis',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wisski_textanly_admin_list'),
+    'access arguments' => array('wisski administrate page'),
+    'file' => 'wisski_textanly.admin.inc',
+  );
+  $items['admin/settings/wisski/text/anly/%/add'] = array(
+    'title' => 'Add Analyser',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wisski_textanly_admin_edit', NULL, 5),
+    'access arguments' => array('wisski administrate page'),
+    'file' => 'wisski_textanly.admin.inc',
+  );
   $items['admin/settings/wisski/text/anly/%/edit'] = array(
-      'title' => 'Edit',
-      'type' => MENU_CALLBACK,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('wisski_textanly_admin_edit', 4),
-      'access arguments' => array('wisski administrate page'),
-      'file' => 'wisski_textanly.admin.inc',
-      );
+    'title' => 'Edit',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wisski_textanly_admin_edit', 5),
+    'access arguments' => array('wisski administrate page'),
+    'file' => 'wisski_textanly.admin.inc',
+  );
+  $items['admin/settings/wisski/text/anly/%/clone'] = array(
+    'title' => 'Edit',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wisski_textanly_admin_edit', 5, '', TRUE),
+    'access arguments' => array('wisski administrate page'),
+    'file' => 'wisski_textanly.admin.inc',
+  );
   $items['admin/settings/wisski/text/anly/%/delete'] = array(
-      'title' => 'Delete',
-      'type' => MENU_CALLBACK,
-      'page callback' => 'wisski_textanly_admin_delete',
-      'page arguments' => array(4),
-      'access arguments' => array('wisski administrate page'),
-      'file' => 'wisski_textanly.admin.inc',
-      );
-  $items['wisski/textanly/js/edit'] = array(
-      'type' => MENU_CALLBACK,
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('wisski_textanly_admin_edit_js', 3),
-      'access arguments' => array('wisski administrate page'),
-      'file' => 'wisski_textanly.admin.inc',
-      );
+    'title' => 'Delete',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'wisski_textanly_admin_delete',
+    'page arguments' => array(5),
+    'access arguments' => array('wisski administrate page'),
+    'file' => 'wisski_textanly.admin.inc',
+  );
+  $items['admin/settings/wisski/text/anly/test'] = array(
+    'title' => 'Text Analysis Test Page',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wisski_textanly_test_page'),
+    'access arguments' => array('wisski administrate page'),
+  );
+  $items['wisski/textanly/log'] = array(
+    'title' => '',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'wisski_textanly_ajax_log',
+    'page arguments' => array(),
+    'access callback' => TRUE,
+  );
+  $items['wisski/textanly/showlog/%'] = array(
+    'title' => '',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'wisski_textanly_html_log',
+    'page arguments' => array(3),
+    'access callback' => TRUE,
+  );
   return $items;
 
 }
@@ -89,69 +84,12 @@ function wisski_textanly_menu () {
 
 
 
-/** Analyses a HTML fragment
-*
-* @parameter $text the html fragment
-* @parameter $lang the default document language
-* @parameter $profile the profile of the analysis configuration
-*   (this currentyl is not supported by the admin interface)
-*
-* @return a list of proposed annotations
-*
-* @author Martin Scholz
-*
-*/
 function wisski_textanly_analyse_xhtml_fragment($text, $lang = '', $profile = 'default') {
   include_once(dirname(__FILE__) . '/wisski_textanly.analyse.inc');
   return _wisski_textanly_analyse_xhtml_fragment($text, $lang, $profile);
 }
 
 
-/** Takes a fragment of HTML and extracts text information
-*
-* @parameter $text the HTML fragment
-* @parameter $default_lang the document defualt language
-
-* @return an array of text information containing
-* - text: The pure text contents.
-    UTF8 encoded; use multibyte methods mb_* or //u flag in preg_*!
-    Some HTML tags are replaces by a whitespace character to separate words
-    (e.g. <br/>, <p>, ...)
-* - char_shifts: due to ws-insertion for tags, the (P)CDATA character position
-    in the HTML doc may vary from the position in pure text string.
-    This is an assoc array with pairs
-    <#shifted chars> => <max text pos with that shift (excluded)>
-    e.g. an array(0 => 12, 1 => 14, 2 => 34) says that all char positions until
-    excluding char 12 have to be shifted left 0, until excluding char 14
-    shifted left 1, etc. to obtain the char position in the HTML
-* - lang_ranges: an array with keys being language labels and values being each
-*   a list of text intervals that are marked in this language.
-*   Intervals are encoded as array(start, end). E.g.
-*   array(
-        'en' => array(array(10, 20)),
-        'de' => array(array(0, 10), array(20, 30)))
-* - annos: an array of annotations found in the text
-*
-* @author Martin Scholz
-*/
-function wisski_textanly_strip_tags($xhtml, $default_lang = '') {
-  include_once(dirname(__FILE__) . '/wisski_textanly.inc');
-  return _wisski_textanly_strip_tags($xhtml, $default_lang);
-}
-
-
-/** generate triples from a HTML fragment
-*
-* @parameter $xhtml the html fragment
-* @parameter $doc_uri the instance URI of this document
-* @parameter $params additional parameters for triple generation
-*
-* @return a list of triples in ARC2 structure
-*/
-function wisski_textanly_triplify_xhtml($xhtml, $doc_uri, $params = array()) {
-  include_once(dirname(__FILE__) . '/wisski_textanly.inc');
-  return _wisski_textanly_triplify_xhtml($xhtml, $doc_uri, $params);
-}
 
 
 /** Get a information about available analysis component types.
@@ -164,33 +102,89 @@ function wisski_textanly_triplify_xhtml($xhtml, $doc_uri, $params = array()) {
 * @author Martin Scholz
 */
 function wisski_textanly_get_types($type = NULL, $col = NULL) {
-  include_once('wisski_textanly.inc');
-  return _wisski_textanly_get_types($type, $col);
+  static $types = array();
+
+  if (!$types) {
+    foreach (module_implements('wisski_textanly') as $module) {
+      foreach (module_invoke($module, 'wisski_textanly', 'list') as $t => $info) {
+        $info['module'] = $module;
+        $info['id'] = $t;
+        $types[$t] = $info;
+      }
+    }
+  }
+
+  if (!$type) {
+    return $types;
+  } elseif (!isset($types[$type])) {
+    return NULL;
+  } elseif (!$col) {
+    return $types[$type];
+  } else {
+    return $types[$type][$col];
+  }
+
 }
 
-/** Get one or multiple analysis step objects from db
+/** Get one or multiple analysers from db
 *
-* @return If $aid and $col is set, the value of key $col for step with id $aid.
-*   If only $aid is set, return step object with id $aid.
-*   If $aid is NULL, return all step objects sorted by weight.
+* @return If $aid and $col is set, the value of key $col for analyser with id $aid.
+*   If only $aid is set, return analyser with id $aid.
+*   If $aid is NULL, return all analysers sorted by weight.
 *
 * @author Martin Scholz
 *
 */
 function wisski_textanly_get($aid = NULL, $col = NULL, $refresh = FALSE) {
-  include_once('wisski_textanly.inc');
-  return _wisski_textanly_get($aid, $col, $refresh);
+  static $aps = array();
+  static $all = FALSE;
+
+  if ($reload) {
+    $aps = array();
+    $all = FALSE;
+  }
+
+  if (!$all && (!$aid || !isset($aps[$aid]))) {
+    $rows = db_query('SELECT * FROM {wisski_textanly_analyser}' . ((!$aid) ? ' ORDER BY weight ASC' : ' WHERE aid = %d'), $aid);
+    while (TRUE) {
+      $ap = db_fetch_object($rows);
+      if (!$ap) break;
+      $ap->settings = unserialize($ap->settings);
+      $aps[$ap->aid] = $ap;
+    }
+    if (!$aid) $all = TRUE;
+  }
+
+  if (!$aid) {
+    return $aps;
+  } elseif (!isset($aps[$aid])) {
+    return NULL;
+  } elseif (!$col) {
+    return $aps[$aid];
+  } elseif (!isset($aps[$aid]->$col)) {
+    return NULL;
+  } else {
+    return $aps[$aid]->$col;
+  }
+
 }
 
 
-/** Save step object to db
+/** Save analyser to db
 * $ap may be changed, e.g. an id may be added
 *
 * @author Martin Scholz
 */
 function wisski_textanly_save(&$ap) {
-  include_once('wisski_textanly.inc');
-  return _wisski_textanly_save($ap);
+  
+  if ($ap->aid) {
+    // update
+    drupal_write_record('wisski_textanly_analyser', $ap, 'aid');
+  } else {
+    // insert
+    drupal_write_record('wisski_textanly_analyser', $ap);
+  }
+
 }
 
 /** delete a step object
@@ -198,7 +192,7 @@ function wisski_textanly_save(&$ap) {
 * @author Martin Scholz
 */
 function wisski_textanly_delete($aid) {
-  db_query('DELETE FROM {wisski_textanly_pipes} WHERE aid = %d', $aid);
+  db_query('DELETE FROM {wisski_textanly_analyser} WHERE aid = %d', $aid);
   return TRUE;
 }
 
@@ -209,7 +203,6 @@ function wisski_textanly_delete($aid) {
 *
 * @parameter $op Operation may be
 * - list: get a list of defined types with info.
-* - settings: TODO: what does this do?
 * - analyse: analyse a piece of text
 * - operations: list available admin operations (for display in the admin list tab)
 * - edit: the form for adding/editing a step
@@ -220,7 +213,6 @@ function wisski_textanly_delete($aid) {
 *
 * The other parameters depend on $op:
 * - list: no params
-* - settings: (no info)
 * - analyse:
 *   - $type: the step type
 *   - $profile: the profile to be applied
@@ -233,6 +225,8 @@ function wisski_textanly_delete($aid) {
 *     if a lemma and part-of-speech info is available.
 *   - $annos: already set/found annotations
 *   - $settings: settings for the step
+*   - $ticket: a unique ticket for the analysis process.
+*     May be used by components to pass through extra data.
 * - operations, edit, validate, submit:
 *   - $ap: the step object
 *
@@ -243,8 +237,6 @@ function wisski_textanly_delete($aid) {
 *   - description: a description of the type
 *   - langs: a list of languages this component type may be applied to.
 *     A single entry '' means all languages.
-*   - multiple: if multiple steps of this component type may be instanciated
-* - settings: TODO: what does this do?
 * - analyse: an array of annotations
 * - operations: an assoc array of admin operations for this type mapped to
 *   their URL callbacks
@@ -253,91 +245,85 @@ function wisski_textanly_delete($aid) {
 *
 * @author Martin Scholz
 */
-function wisski_textanly_wisski_textanly($op, $ap = NULL) {
+function wisski_textanly_wisski_textanly($op, $ap = NULL, $text_struct = NULL, $ticket = NULL) {
 
   switch ($op) {
     case 'list':
       return array(
         'wisski_textanly_vocab' => array(
-          'title' => t('Detection of Vocabulary Entries'),
+          'title' => t('Vocabulary Entries'),
           'description' => t('Detection of mentions of vocabulary entries.'),
           'langs' => array(''),
-          'multiple' => FALSE,
         ),
-        'wisski_textanly_person' => array(
-          'title' => t('Detection of Person Names'),
-          'description' => t('Detection of person names'),
+        'wisski_textanly_mw_automaton' => array(
+          'title' => t('Multiword pattern'),
+          'description' => t('Detection of multi-word patterns. Can be used to detect person names.'),
           'langs' => array(''),
-          'multiple' => FALSE,
         ),
         'wisski_textanly_datetime' => array(
-          'title' => t('Detection of Dates & Times'),
+          'title' => t('Dates & Times'),
           'description' => t('Detection of statements about temporal location'),
           'langs' => array('de', 'en'),
-          'multiple' => FALSE,
         ),
         'wisski_textanly_regexp' => array(
           'title' => t('Regular Expression Pattern'),
           'description' => t('Detection of patterns withs regular expressions'),
           'langs' => array(''),
-          'multiple' => TRUE,
+        ),
+        'wisski_textanly_tokenizer' => array(
+          'title' => t('Basic Tokenizer'),
+          'description' => t('Tokenizes plain text'),
+          'langs' => array(''),
+        ),
+        'wisski_textanly_tagger' => array(
+          'title' => t('POS-Tagger and Lemmatizer (External)'),
+          'description' => t('Uses external tools for part-of-speech tagging and lemmatization'),
+          'langs' => array(''),
+        ),
+        'wisski_textanly_xhtml' => array(
+          'title' => t('WissKI XHTML'),
+          'description' => t('Meta-Analyser for texts in WissKI XHTML format'),
+          'langs' => array(''),
+        ),
+        'wisski_textanly_filter' => array(
+          'title' => t('Filter Annotations'),
+          'description' => t('Filter annotations by rank or eliminate overlapping annotations'),
+          'langs' => array(''),
+        ),
+        'wisski_textanly_rerank' => array(
+          'title' => t('Rerank Annotations'),
+          'description' => t('Rerank annotations overlapping with annotations of the same type'),
+          'langs' => array(''),
+        ),
+        'wisski_textanly_set_lang' => array(
+          'title' => t('Set Language'),
+          'description' => t('Set the default language'),
+          'langs' => array(''),
         ),
       );
 
-    case 'settings':
-      
-      list(, $id, $profile, $lang, $settings) = func_get_args();
-      $form = array();
-      return $form;
-
     case 'analyse':
       
-      list(, $id, $profile, $lang, $text, $tokens, $annos, $settings) = func_get_args();
+      $id = substr($ap->type, 16);
 
-      switch ($id) {
-        case 'wisski_textanly_vocab':
-          include_once(dirname(__FILE__) . '/wisski_textanly.analyse.inc');
-          return _wisski_textanly_analyse_vocab($profile, $lang, $text, $tokens, $annos, $settings);
-
-        case 'wisski_textanly_person':
-          include_once(dirname(__FILE__) . '/wisski_textanly.analyse.inc');
-          return _wisski_textanly_analyse_automaton($profile, $lang, $text, $tokens, $annos, $settings);
-  
-        case 'wisski_textanly_datetime':
-          include_once(dirname(__FILE__) . '/wisski_textanly.analyse.inc');
-          return _wisski_textanly_analyse_datetime($profile, $lang, $text, $tokens, $annos, $settings);
-          
-        case 'wisski_textanly_regexp':
-          include_once(dirname(__FILE__) . '/wisski_textanly.analyse.inc');
-          return _wisski_textanly_analyse_regexp($profile, $lang, $text, $tokens, $annos, $settings);
-          
-      }
+      include_once(dirname(__FILE__) . '/wisski_textanly.analyse.' . $id . '.inc');
+      return call_user_func("wisski_textanly_analyse_$id", $ap, $text_struct, $ticket);
       
     default:
 	
-		include_once('wisski_textanly.inc');
-		if (function_exists('wisski_textanly_wisski_textanly_' . $ap->type)) {
-		  return call_user_func('wisski_textanly_wisski_textanly_' . $ap->type, $op, $ap);
-		} else {
-		  return NULL;
-		}
-
-   
+      $id = substr($ap->type, 16);
+      
+      include_once(dirname(__FILE__) . '/wisski_textanly.analyse.' . $id . '.inc');
+	  	if (function_exists("wisski_textanly_admin_analyse_$id")) {
+  		  return call_user_func_array("wisski_textanly_admin_analyse_$id", func_get_args());
+	  	} else {
+		    return NULL;
+		  }
 
   }
 
 }
 
-
-/**Get the prefix for creating new instance URIs
-* TODO: Should be moved to module wisski
-*
-* @author Martin Scholz
-*/
-function wisski_instance_prefix() {
-  global $base_root, $base_path;
-  return $base_root . $base_path . "content/";
-}
 
 
 /** hook_theme implementation for theming the table in admin list tab
@@ -346,7 +332,7 @@ function wisski_instance_prefix() {
 */
 function wisski_textanly_theme() {
   return array(
-    'wisski_textanly_admin_list' => array(
+    'wisski_textanly_profile_table' => array(
       'file' => 'wisski_textanly.admin.inc',
       'arguments' => array('form' => NULL),
     ),
@@ -355,36 +341,41 @@ function wisski_textanly_theme() {
 
 
 
-/* Web service callback: Analyse a text and return a json object
-* containing proposed annotations.
-*
-* Supports only parameter 'text' which contains the text to be analysed
-*
-* @author Martin Scholz
-*
-*/
-function wisski_textanly_ws_analyse() {
+function wisski_textanly_analyse($profile, $text_struct, $ticket = NULL) {
+
+  if ($ticket === NULL) $ticket = wisski_get_uuid(4);
+
+  $rows = db_query("SELECT * FROM {wisski_textanly_analyser} WHERE profile = '%s' ORDER BY weight ASC", $profile);
   
-  //TODO uncomment  drupal_set_header('Content-Type: application/json; charset=utf-8');
-  
-  // we use the textedit module to read the post parameters
-  $q = (object) array('rev' => NULL, 'text' => NULL, 'annos' => array());
-  module_load_include('inc', 'wisski_textedit', 'wisski_textedit.ws');
-  _wisski_textedit_ws_query_params($q);
-  
-  if ($q->text === NULL) {
-    // found no text parameter
-    drupal_set_header('HTTP/1.1 400 Bad Request');
-    print json_encode(array("error" => "no text to analyse"));
-    return;    
+  wisski_textanly_log($ticket, $text_struct, 'dbg');
+  while ($analyser = db_fetch_object($rows)) {
+    $analyser->settings = unserialize($analyser->settings);
+    // run analyser
+    wisski_textanly_log($ticket, t('Running analyser !a.', array('!a' => $analyser->name)));
+    $text_struct = module_invoke($analyser->module, 'wisski_textanly', 'analyse', $analyser, $text_struct, $ticket);
+    wisski_textanly_log($ticket, $text_struct, 'dbg');
   }
+
+  return $text_struct;
+
+}
+
+
+function wisski_textanly_log($ticket, $msg, $level = 'info') {
   
-  $annos = wisski_textanly_analyse_xhtml_fragment($q->text);
-  
-  // Print result
-  print json_encode(array('rev' => $q->rev, "annos" => $annos));
-  return;
-  
+  if ($level != 'info' && $level != 'dbg' && $level != 'err' && $level != 'warn') {
+    drupal_set_message(t("Bad log level: '%l'", array('%l' => $level)), 'error');
+    return;
+  }
+
+  $cache = cache_get("wisski_textanly_log_$ticket", 'cache');
+  if (empty($cache)) $cache = array();
+  else $cache = $cache->data;
+
+  $cache[] = array(time(), $level, $msg);
+
+  cache_set("wisski_textanly_log_$ticket", $cache, 'cache', CACHE_TEMPORARY);
+
 }
 
 
@@ -396,26 +387,223 @@ function wisski_textanly_ws_analyse() {
 */
 function wisski_textanly_wysiwyg_plugin($editor, $version) {
   if ($editor != 'tinymce') return;
-  
-  $path_wisski_textedit = drupal_get_path('module', 'wisski_textanly');
 
   global $base_root, $base_path;
 
   $plugins = array(
-      // sends the text to server and retrieves automatically generated annotations 
-      'wisskiSend' => array(
-          'path' => $path_wisski_textedit . '/editor_plugin.js',
-          'extensions' => array('wisskiSend' => t('WissKI Send')),
-          'buttons' => array('wisski_autosend' => t('Wisski Toggle Autosend'), 'wisski_manualsend' => t('Wisski Manual Send')),
-          'options' => array(
-            'wisskiSend_autosend' => variable_get('wisski_textanly_autosend', FALSE) ? 'true' : 'false',
-            'wisskiSend_interval' => variable_get('wisski_textanly_send_interval', 5000),
-            'wisskiSend_url' => $base_root . $base_path . 'wisski/textanly/analyse',
-            ),
-          'load' => TRUE,
-          ),
-      );
+    // sends the text to server and retrieves automatically generated annotations 
+    'wisskiTextAnly' => array(
+      'path' => drupal_get_path('module', 'wisski_textanly') . '/tinymce_plugin.js',
+      'buttons' => array(
+        'wisskiTextAnlyAuto' => t('Wisski Toggle Periodic Analysis'),
+        'wisskiTextAnlyManual' => t('Wisski Analyse (Manual trigger)'),
+        'wisskiTextAnlyLog' => t('Wisski Show last analysis log'),
+      ),
+      'options' => array(
+        'wisski_textanly_profile' => variable_get('wisski_textanly_profile', array('default' => 'default')),
+        'wisski_textanly_autosend' => variable_get('wisski_textanly_autosend', FALSE) ? 'true' : 'false',
+        'wisski_textanly_autosend_interval' => variable_get('wisski_textanly_send_interval', 5000),
+        'wisski_textanly_url' => $base_root . $base_path . 'wisski/textanly/analyse',
+        'wisski_textanly_log_url' => $base_root . $base_path . 'wisski/textanly/log',
+        ),
+      'load' => TRUE,
+    ),
+  );
 
   return $plugins;
 }
 
+
+
+/* Determine overlap info of two ranges
+* @return an array with following information:
+* 0 => allen relation: < > = s si f fi o oi d di m mi
+* 1 => # chars that overlap
+* 2 => % of chars that overlap
+*
+* @author Martin Scholz
+*
+*/
+function _wisski_textanly_calculate_overlap($s1, $e1, $s2, $e2) {
+  
+  if ($s1 > $e2) return array('>', 0, 0); 
+  if ($s1 == $e2) return array('mi', 0, 0);
+  if ($s2 == $e1) return array('m', 0, 0);
+  if ($s2 > $e1) return array('<', 0, 0);
+  $all_chars = 0.5 * (($e1 - $s1) + ($e2 - $s2));
+  if ($s1 == $s2) {
+    if ($e1 == $e2) return array('=', $e1 - $s1, 100);
+    if ($e1 < $e2) return array('s', $e1 - $s1, ($e1 - $s1) / $all_chars);
+    if ($e1 > $e2) return array('si', $e1 - $s1, ($e2 - $s2) / $all_chars);
+  }
+  if ($s1 < $s2) {
+    if ($e1 == $e2) return array('fi', $e2 - $s2, ($e2 - $s2) / $all_chars);
+    if ($e1 < $e2) return array('o', $e1 - $s2, ($e1 - $s2) / $all_chars);
+    if ($e1 > $e2) return array('di', $e2 - $s2, ($e2 - $s2) / $all_chars);
+  }
+  if ($s1 > $s2) {
+    if ($e1 == $e2) return array('f', $e1 - $s1, ($e1 - $s1) / $all_chars);
+    if ($e1 < $e2) return array('d', $e1 - $s1, ($e1 - $s1) / $all_chars);
+    if ($e1 > $e2) return array('oi', $e2 - $s1, ($e2 - $s1) / $all_chars);
+  }
+
+}
+
+
+
+/** 
+*
+* @author Martin Scholz
+*
+*/
+function wisski_textanly_test_page() {
+  
+  $form['text'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Text'),
+    '#attributes' => array('id' => 'analyse_text'),
+  );
+  $form['profile'] = array(
+    '#type' => 'select',
+    '#title' => t('Profile'),
+    '#options' => variable_get('wisski_textanly_profiles', array('default')),
+    '#default_value' => 'default',
+    '#attributes' => array('id' => 'analyse_profile'),
+  );
+  $form['analyse'] = array(
+    '#type' => 'markup',
+    '#value' => t('Analyse'),
+    '#prefix' => '<p><a id="analyse_do" href="#">',
+    '#suffix' => '</a></p>',
+  );
+  $form['result'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Result'),
+  );
+  $form['result']['value'] = array(
+    '#value' => '<div><pre id="analyse_result" class="json_dump"></pre></div>',
+  );
+  $form['logs'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Logs'),
+  );
+  $form['logs']['value'] = array(
+    '#value' => '<div><pre id="analyse_log" class="json_dump"></pre></div>',
+  );
+
+  drupal_add_js(drupal_get_path('module', 'wisski_textanly') . '/test_page.js', 'module', 'footer');
+  drupal_add_css(drupal_get_path('module', 'wisski_textanly') . '/test_page.css', 'module');
+ 
+  return $form;
+}
+
+
+
+
+/** Web service callback: Analyse a text and return a json object
+* containing proposed annotations.
+*
+* Supports parameters in $q. All are optional but 'text'.
+*
+* @author Martin Scholz
+*
+*/
+function wisski_textanly_ajax_analyse() {
+  
+  drupal_set_header('Content-Type: application/json; charset=utf-8');
+  
+  // we use the textedit module to read the post parameters
+  $q = (object) array('ticket' => NULL, 'text' => NULL, 'annos' => array(), 'profile' => 'default', 'annos_only' => TRUE);
+  wisski_parse_http_params($q, "text_struct");
+  
+  if ($q->text === NULL) {
+    // found no text parameter
+    drupal_set_header('HTTP/1.1 400 Bad Request');
+    print json_encode(array("error" => "no text to analyse"));
+    return;    
+  }
+  
+  $text_struct = array(
+    'text' => $q->text,
+    'annos' => $q->annos,
+  );
+  $ticket = empty($q->ticket) ? wisski_get_uuid(4) : $q->ticket;
+  $text_struct = wisski_textanly_analyse($q->profile, $text_struct, $ticket);
+  
+  // Print result
+  $json = array('ticket' => $ticket);
+  if ($q->annos_only) $json["annos"] = $text_struct['annos'];
+  else $json["text_struct"] = $text_struct;
+
+  print json_encode($json);
+  return;
+  
+}
+
+
+/** Web service callback: Return the logs of an analysis as a json object
+*
+* Supported parameters in $q are 'ticket' (mandatory) and 'logs' (optional).
+* The latter is an array of log levels to return. By default only returns info level.
+*
+* @author Martin Scholz
+*
+*/
+function wisski_textanly_ajax_log() {
+
+  drupal_set_header('Content-Type: application/json; charset=utf-8');
+  
+  // we use the textedit module to read the post parameters
+  $q = (object) array('ticket' => NULL, 'levels' => array('info'));
+  wisski_parse_http_params($q, "log");
+  
+  $ticket = $q->ticket;
+  if ($ticket === NULL) {
+    // found no text parameter
+    drupal_set_header('HTTP/1.1 400 Bad Request');
+    print json_encode(array("error" => "no ticket specified"));
+    return;    
+  }
+
+  $json = array('ticket' => $ticket);
+  if (!empty($q->levels) && is_array($q->levels)) {
+    $cache = cache_get("wisski_textanly_log_$ticket", 'cache');
+    if (isset($cache->data)) {
+      foreach ($cache->data as $log) 
+        if (in_array($log[1], $q->levels)) $json['logs'][] = $log;
+    }
+  }
+
+  print json_encode($json);
+  return;
+  
+}
+
+
+
+
+/** Web service callback: Return the logs of an analysis as a json object
+*
+* Supported parameters in $q are 'ticket' (mandatory) and 'logs' (optional).
+* The latter is an array of log levels to return. By default only returns info level.
+*
+* @author Martin Scholz
+*
+*/
+function wisski_textanly_html_log($ticket) {
+
+  if ($ticket === NULL) {
+    // found no text parameter
+    drupal_set_header('HTTP/1.1 400 Bad Request');
+    return "no ticket specified";
+  }
+  
+  drupal_add_js(drupal_get_path('module', 'wisski_textanly') . '/test_page.js', 'module', 'footer');
+  drupal_add_css(drupal_get_path('module', 'wisski_textanly') . '/test_page.css', 'module');
+  
+  $script = "WissKI.textanly.getLogs('$ticket');";
+  drupal_add_js($script,  'inline', 'footer');
+
+  return '<pre id="analyse_log" class="json_dump"></pre>';
+  
+}
