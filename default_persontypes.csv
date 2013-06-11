@@ -1,9 +1,9 @@
-	#	chars	used	for	the	type:
-	#	r:	a	relationship
-	#	t:	a	title
-	#	p:	a	profession
-	#	x:	a	religion
-	#	c:	copulas	(for	"Tochter	von/des	...")
+ #	chars	used	for	the	type:
+ #	r:	a	relationship
+ #	t:	a	title
+ #	p:	a	profession
+ #	x:	a	religion
+ #	c:	copulas	(for	"Tochter	von/des	...")
 
 Bruder	r	0	1	de	m
 Ehefrau	r	0	1	de	w
