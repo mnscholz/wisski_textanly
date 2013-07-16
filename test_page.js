@@ -6,7 +6,7 @@
   if (typeof WissKI === 'undefined') WissKI = {};
   if (typeof WissKI.textanly === 'undefined') WissKI.textanly = {};
 
-  WissKI.textanly.logReload = false;
+  WissKI.textanly.logReload = 0;
   WissKI.textanly.lastTicket = '';
 
   WissKI.textanly.syntaxhilite = function(json) {
@@ -40,7 +40,10 @@
       success : function (response) {
         var html = WissKI.textanly.syntaxhilite(response);
         $('#analyse_log').html(html);
-        if (WissKI.textanly.logReload) window.setTimeout(function() {WissKI.textanly.getLogs(ticket)}, 500);
+        if (WissKI.textanly.logReload != 0) {
+          if (WissKI.textanly.logReload == 2) WissKI.textanly.logReload = 0;
+          window.setTimeout(function() {WissKI.textanly.getLogs(ticket)}, 1500);
+        }
       }
     });
 
@@ -58,7 +61,7 @@
     $('#analyse_result').html('Processing...');
     // escape text
 
-    WissKI.textanly.log_reload = true;
+    WissKI.textanly.logReload = 0;
 
     $.ajax({
       url: Drupal.settings.basePath + 'wisski/textanly/analyse',
@@ -74,8 +77,11 @@
           var t = text;
 
           annos.sort(function(a, b) { return b.range[0] - a.range[0]; });
+          var laststart = t.length;
           for (i in annos) {
             var a = annos[i];
+            if (laststart < a.range[1]) continue;
+            laststart = a.range[0];
             t = t.substring(0, a.range[0]) + '<span style="border:double green 1px;" title="' + a.class + ': ' + a.range.join(', ') + '">' + t.substring(a.range[0], a.range[1]) + '</span>' + t.substring(a.range[1]);
           }
 
@@ -83,15 +89,16 @@
         }
 
         $('#analyse_result').html(html);
-        WissKI.textanly.logReload = false;
+        WissKI.textanly.logReload = 0;
+        WissKI.textanly.getLogs(ticket);
       },
       error : function() {
         $('#analyse_result').html('An error occured');
-        WissKI.textanly.logReload = false;
+        WissKI.textanly.logReload = 2;
       }
     });
     
-    WissKI.textanly.getLogs(ticket);
+//    WissKI.textanly.getLogs(ticket);
 
     return false;
 

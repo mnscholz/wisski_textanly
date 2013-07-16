@@ -64,7 +64,6 @@ function wisski_textanly_admin_analyse_set_lang($op, $ap) {
 function wisski_textanly_analyse_set_lang($analyser, $text_struct, $ticket) {
   
   $text_struct['lang'] = $analyser->settings['lang'];
-
   return $text_struct;
 
 }
