@@ -58,7 +58,7 @@
     analyse_interval = null;
 
     $('#analyse_log').html('');
-    $('#analyse_result').html('Processing...');
+    $('#analyse_result').html('Processing ' + ticket + '...');
     // escape text
 
     WissKI.textanly.logReload = 0;
@@ -103,6 +103,12 @@
     return false;
 
   });
-  
+
+  var log = $('#analyse_log')[0].textContent;
+  if (log) $('#analyse_log').html(WissKI.textanly.syntaxhilite(log));
+
+  var log = $('#analyse_result')[0].textContent;
+  if (log) $('#analyse_result').html(WissKI.textanly.syntaxhilite(log));
+
 })();
 

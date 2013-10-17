@@ -1,6 +1,8 @@
 <?php
 // $Id$
 
+/** @author Martin Scholz, unless otherwise noted */
+
 
 
 /**
@@ -80,15 +82,6 @@ function wisski_textanly_menu () {
   return $items;
 
 }
-
-
-
-
-function wisski_textanly_analyse_xhtml_fragment($text, $lang = '', $profile = 'default') {
-  include_once(dirname(__FILE__) . '/wisski_textanly.analyse.inc');
-  return _wisski_textanly_analyse_xhtml_fragment($text, $lang, $profile);
-}
-
 
 
 
@@ -250,6 +243,11 @@ function wisski_textanly_wisski_textanly($op, $ap = NULL, $text_struct = NULL, $
   switch ($op) {
     case 'list':
       return array(
+        'wisski_textanly_anno2token' => array(
+          'title' => t('Token Annotation Table'),
+          'description' => t('Provides a table that directly associates tokens with annotations.'),
+          'langs' => array(''),
+        ),
         'wisski_textanly_vocab' => array(
           'title' => t('Vocabulary Entries'),
           'description' => t('Detection of mentions of vocabulary entries.'),
@@ -270,6 +268,16 @@ function wisski_textanly_wisski_textanly($op, $ap = NULL, $text_struct = NULL, $
           'description' => t('Detection of patterns withs regular expressions'),
           'langs' => array(''),
         ),
+        'wisski_textanly_remove_cols' => array(
+          'title' => t('Remove keys'),
+          'description' => t('Prevent keys from being passed on in the analysis pipeline.'),
+          'langs' => array(''),
+        ),
+        'wisski_textanly_sentence_splitter' => array(
+          'title' => t('Sentence splitter'),
+          'description' => t('Splits sentences based on POS tags.'),
+          'langs' => array(''),
+        ),
         'wisski_textanly_tokenizer' => array(
           'title' => t('Basic Tokenizer'),
           'description' => t('Tokenizes plain text'),
@@ -278,7 +286,12 @@ function wisski_textanly_wisski_textanly($op, $ap = NULL, $text_struct = NULL, $
         'wisski_textanly_tagger' => array(
           'title' => t('POS-Tagger and Lemmatizer (External)'),
           'description' => t('Uses external tools for part-of-speech tagging and lemmatization'),
-          'langs' => array(''),
+          'langs' => array('de', 'en'),
+        ),
+        'wisski_textanly_dependency' => array(
+          'title' => t('Dependency Parser (External)'),
+          'description' => t('Uses external tools for dependency parsing'),
+          'langs' => array('de'),
         ),
         'wisski_textanly_xhtml' => array(
           'title' => t('WissKI XHTML'),
@@ -361,8 +374,8 @@ function wisski_textanly_analyse($profile, $text_struct, $ticket = NULL) {
 }
 
 
-function wisski_textanly_log($ticket, $msg, $level = 'info') {
-  
+function wisski_textanly_log($ticket, $msg = NULL, $level = 'info') {
+  $args = func_get_args();
   if ($level != 'info' && $level != 'dbg' && $level != 'err' && $level != 'warn') {
     drupal_set_message(t("Bad log level: '%l'", array('%l' => $level)), 'error');
     return;
@@ -372,9 +385,11 @@ function wisski_textanly_log($ticket, $msg, $level = 'info') {
   if (empty($cache)) $cache = array();
   else $cache = $cache->data;
 
-  $cache[] = array(time(), $level, $msg);
+  if (count($args) > 1) $cache[] = array(time(), $level, $msg);
 
   cache_set("wisski_textanly_log_$ticket", $cache, 'cache', CACHE_TEMPORARY);
+
+  return $cache;
 
 }
 
@@ -528,6 +543,7 @@ function wisski_textanly_ajax_analyse() {
     'annos' => $q->annos,
   );
   $ticket = empty($q->ticket) ? wisski_get_uuid(4) : $q->ticket;
+  wisski_textanly_log($ticket, 'Text from test page. Starting analysis...', 'dbg');
   $text_struct = wisski_textanly_analyse($q->profile, $text_struct, $ticket);
   
   // Print result
@@ -536,7 +552,7 @@ function wisski_textanly_ajax_analyse() {
   else $json["text_struct"] = $text_struct;
 
   print json_encode($json);
-  return;
+  exit();
   
 }
 
