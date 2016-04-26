@@ -196,8 +196,7 @@ function wisski_textanly_analyse_mw_automaton($analyser, $text_struct, $ticket) 
         }
       }
     }
-if ($token[0] == 'Juden') dpm($finding);
-    
+
     // store each possible finding in the grand findings table
     foreach ($finding as $f) {
       // annotate the right token with the class
